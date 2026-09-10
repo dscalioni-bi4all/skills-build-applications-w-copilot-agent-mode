@@ -1,8 +1,39 @@
-import { useCollection } from '../api';
+import { useEffect, useState } from 'react';
+import { toArray } from '../api';
 import CollectionState from './CollectionState';
 
+// Falls back to localhost so an unset VITE_CODESPACE_NAME never yields "https://undefined-8000...".
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+const apiUrl = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev/api/activities/`
+  : 'http://localhost:8000/api/activities/';
+
 function Activities() {
-  const { items, error, loading } = useCollection('activities');
+  const [items, setItems] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(apiUrl, { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((payload) => setItems(toArray(payload)))
+      .catch((requestError) => {
+        if (requestError.name !== 'AbortError') {
+          setError(requestError.message);
+        }
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <section>
