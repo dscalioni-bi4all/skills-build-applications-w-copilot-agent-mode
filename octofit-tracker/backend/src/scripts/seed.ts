@@ -13,6 +13,10 @@ async function seedDatabase() {
     console.log('Connected to octofit_db');
     console.log('Seed the octofit_db database with test data');
 
+    if (process.env.ALLOW_DESTRUCTIVE_SEED !== 'true') {
+      throw new Error('Refusing to delete existing data; set ALLOW_DESTRUCTIVE_SEED=true to continue');
+    }
+
     await Promise.all([
       User.deleteMany({}),
       Team.deleteMany({}),
