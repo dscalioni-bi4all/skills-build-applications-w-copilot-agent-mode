@@ -12,4 +12,8 @@ mongoose
     process.exit(1);
   });
 
+mongoose.connection.on('error', (error) => {
+  console.error('MongoDB connection error:', error);
+});
+
 export default mongoose.connection;
