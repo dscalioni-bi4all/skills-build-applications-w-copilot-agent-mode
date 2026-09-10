@@ -30,7 +30,11 @@ function Workouts() {
           setError(requestError.message);
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      });
 
     return () => controller.abort();
   }, []);
