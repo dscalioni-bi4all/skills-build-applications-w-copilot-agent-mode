@@ -1,5 +1,6 @@
+import cors from 'cors';
 import express from 'express';
-import { baseUrl, port } from './config/api';
+import { baseUrl, frontendUrl, port } from './config/api';
 import './config/database';
 import {
   activitiesRouter,
@@ -11,6 +12,7 @@ import {
 
 const app = express();
 
+app.use(cors({ origin: frontendUrl }));
 app.use(express.json());
 
 app.get('/api/health', (_request, response) => {
