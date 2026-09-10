@@ -1,6 +1,5 @@
 import cors from 'cors';
 import express from 'express';
-import { baseUrl, frontendUrl, port } from './config/api';
 import './config/database';
 import {
   activitiesRouter,
@@ -9,6 +8,17 @@ import {
   usersRouter,
   workoutsRouter,
 } from './routes';
+
+const port = 8000;
+const codespaceName = process.env.CODESPACE_NAME;
+
+const baseUrl = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : 'http://localhost:8000';
+
+const frontendUrl = codespaceName
+  ? `https://${codespaceName}-5173.app.github.dev`
+  : 'http://localhost:5173';
 
 const app = express();
 
